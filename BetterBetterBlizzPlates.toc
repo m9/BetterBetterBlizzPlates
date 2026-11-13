@@ -1,0 +1,13 @@
+## Interface: 16001
+## Title: BetterBetterBlizzPlates
+## Notes: Clean options window for BetterBlizzPlates.
+## Version: 2.2.3f-p0
+## X-BetterBlizzPlates-Version: 2.2.3f
+## X-Curse-Project-ID: 1802237
+## Dependencies: BetterBlizzPlates
+## SavedVariables: BetterBetterBlizzPlatesDB
+
+Harvest.lua
+Layout.lua
+Window.lua
+Core.lua

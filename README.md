@@ -1,3 +1,6 @@
+<img width="850" height="658" alt="image" src="https://github.com/user-attachments/assets/4841d59c-aa07-40a9-84f2-20b0bc860873" />
+
+
 # BetterBetterBlizzPlates
 
 A clean options window for BetterBlizzPlates. Does not edit its files.

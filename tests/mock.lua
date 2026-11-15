@@ -429,6 +429,11 @@ function M.install()
     G.GetCVar = G.C_CVar.GetCVar
     G.SetCVar = noop
     G.GetCVarBool = G.C_CVar.GetCVarBool
+    -- Spells have a name and an icon, so labels built from them work.
+    G.C_Spell = setmetatable({
+        GetSpellName = function(id) return "Spell " .. tostring(id) end,
+        GetSpellTexture = function(id) return tonumber(id) or 134400 end,
+    }, { __index = function() return noop end })
     G.C_AddOns = {
         IsAddOnLoaded = function() return false end,
         -- M.metadata["Addon/Field"] = value; anything else reads as "test".

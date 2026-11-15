@@ -328,6 +328,21 @@ row = rowFor(item)
 check(tostring(row.drop.value:GetText()):find("^%d+ of %d+ on$"), "multi-choice shows a count: " .. tostring(row.drop.value:GetText()))
 check(not row.drop.sample:IsShown(), "no sample on other dropdowns")
 
+-- Forever: the totem list is a multi-choice dropdown whose choices keep their own state.
+if env.client == "forever" then
+    item = find(function(i) return i.kind == "dropdown" and i.name == "Totems" end)
+    check(item and item.sectionName:find("^Totem Indicator"), "totem list is with the Totem Indicator")
+    row = rowFor(item)
+    local total = #item.widget.options
+    check(total > 5 and row.drop.value:GetText() == total .. " of " .. total .. " on",
+        "totem list shows a count: " .. tostring(row.drop.value:GetText()))
+    item.widget:ToggleOption(item.widget.options[1])
+    W.RefreshRows()
+    check(row.drop.value:GetText() == (total - 1) .. " of " .. total .. " on", "totem list count follows a choice")
+    item.widget:ToggleOption(item.widget.options[1])
+    W.RefreshRows()
+end
+
 -- Texture menu samples must not leak into the next menu (rows are reused by the game).
 -- The classic clients put no samples on menu rows, so there is nothing to leak there.
 if not classic then

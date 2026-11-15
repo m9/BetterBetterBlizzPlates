@@ -1,7 +1,7 @@
 #keyless	Auras	39
 #keyless	Castbar	11
 #keyless	Colors	31
-#keyless	Indicators	87
+#keyless	Indicators	86
 #keyless	Nameplates	27
 #keyless	Names and text	38
 #keyless	Other	2
@@ -338,7 +338,7 @@ showNameplateCastbarTimer	Nameplates	Enemy Nameplates
 showNameplateShadow	Colors	Border and background
 showNameplateTargetText	Names and text	Target Text
 showNpcTitle	Names and text	Names
-showTotemIndicatorCooldownSwipe	Indicators	Totem Indicator
+showTotemIndicatorCooldownSwipe	Indicators	Totem Indicator: Icon
 skipAdjustingFixedFonts	Names and text	Names
 smallPetsInPvP	Nameplates	General settings
 sortDurationAuras	Auras	Size & Position
@@ -370,19 +370,19 @@ threatPercent	Colors	Threat Colors: Threat Percent
 threatPercentTestMode	Colors	Threat Colors
 toggleNamesOffDuringPVE	Names and text	Names
 totemIndicator	Indicators	Totem Indicator
-totemIndicatorColorHealthBar	Indicators	Totem Indicator
-totemIndicatorColorName	Indicators	Totem Indicator
-totemIndicatorColorNameOthers	Indicators	Totem Indicator
-totemIndicatorColorOtherHealthBars	Indicators	Totem Indicator
-totemIndicatorEnemyOnly	Indicators	Totem Indicator
-totemIndicatorHideAuras	Indicators	Totem Indicator
-totemIndicatorHideCastbar	Indicators	Totem Indicator
-totemIndicatorHideCountdownNumbers	Indicators	Totem Indicator
-totemIndicatorHideHealthBar	Indicators	Totem Indicator
-totemIndicatorHideNameAndShiftIconDown	Indicators	Totem Indicator
-totemIndicatorNoAnimation	Indicators	Totem Indicator
-totemIndicatorNoGlow	Indicators	Totem Indicator
-totemIndicatorShowOtherIcons	Indicators	Totem Indicator
+totemIndicatorColorHealthBar	Indicators	Totem Indicator: Color
+totemIndicatorColorName	Indicators	Totem Indicator: Color
+totemIndicatorColorNameOthers	Indicators	Totem Indicator: Color
+totemIndicatorColorOtherHealthBars	Indicators	Totem Indicator: Color
+totemIndicatorEnemyOnly	Indicators	Totem Indicator: Visibility
+totemIndicatorHideAuras	Indicators	Totem Indicator: Visibility
+totemIndicatorHideCastbar	Indicators	Totem Indicator: Visibility
+totemIndicatorHideCountdownNumbers	Indicators	Totem Indicator: Icon
+totemIndicatorHideHealthBar	Indicators	Totem Indicator: Visibility
+totemIndicatorHideNameAndShiftIconDown	Indicators	Totem Indicator: Visibility
+totemIndicatorNoAnimation	Indicators	Totem Indicator: Icon
+totemIndicatorNoGlow	Indicators	Totem Indicator: Icon
+totemIndicatorShowOtherIcons	Indicators	Totem Indicator: Icon
 totemIndicatorTestMode	Indicators	Totem Indicator
 useCustomCastbarBGTexture	Castbar	Castbar settings
 useCustomCastbarTexture	Castbar	Castbar settings

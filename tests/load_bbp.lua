@@ -79,7 +79,7 @@ local function load(bbpPath, clientName)
     run("locales/enUS.lua")
     run("shared/functions.lua")
     for _, rel in ipairs({ "shared/fontFallback.lua", "shared/nameplateToggles.lua", "shared/threatTweaks.lua",
-        "shared/comboVisibility.lua", dir .. "/modules/profiles.lua" }) do
+        "shared/comboVisibility.lua", dir .. "/modules/profiles.lua", dir .. "/modules/totem.lua" }) do
         local ok, err = pcall(run, rel)
         if not ok and os.getenv("BBBP_VERBOSE") then io.stderr:write("skip ", rel, ": ", tostring(err), "\n") end
     end

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.4-p0
+
+For BetterBlizzPlates 2.2.4.
+
 ## 2.2.3g-p1
 
 Now works on every game version BetterBlizzPlates supports: Retail, Forever, Mists, Cata, Wrath, TBC and Classic Era.

@@ -1,5 +1,6 @@
 -- Loads the installed BetterBlizzPlates options code into the fake API.
--- Usage: local env = dofile("tests/load_bbp.lua")(bbpPath)
+-- Usage: local env = dofile("tests/load_bbp.lua")(bbpPath, client)
+-- client: forever (default), retail, era, tbc, wrath, cata, mists.
 -- Nothing is copied from BetterBlizzPlates; its files are read from the install.
 
 local here = debug.getinfo(1, "S").source:match("^@(.*)[/\\][^/\\]*$") or "."
@@ -31,11 +32,42 @@ local function findDefaults(path)
     return readLines(path, first + 1, last - 1)
 end
 
-return function(bbpPath)
+-- The game clients BetterBlizzPlates has a TOC for. dir = which copy of its code that TOC loads.
+local CLIENTS = {
+    forever = { toc = "BetterBlizzPlates_Camelot.toc", dir = "forever", build = "1.60.1", project = 1 },
+    retail = { toc = "BetterBlizzPlates.toc", dir = "retail", build = "12.1.5", project = 1 },
+    era = { toc = "BetterBlizzPlates_Vanilla.toc", dir = "classics", build = "1.15.9", project = 2 },
+    tbc = { toc = "BetterBlizzPlates_TBC.toc", dir = "classics", build = "2.5.6", project = 5 },
+    wrath = { toc = "BetterBlizzPlates_Wrath.toc", dir = "classics", build = "3.4.5", project = 11 },
+    cata = { toc = "BetterBlizzPlates_Cata.toc", dir = "classics", build = "4.4.2", project = 14 },
+    mists = { toc = "BetterBlizzPlates_Mists.toc", dir = "classics", build = "5.5.4", project = 19 },
+}
+local ORDER = { "forever", "retail", "era", "tbc", "wrath", "cata", "mists" }
+
+local function interfaces(path)
+    local list = {}
+    for line in io.lines(path) do
+        local value = line:match("^##%s*Interface%s*:%s*(.-)%s*$")
+        if value then
+            for number in value:gmatch("%d+") do list[#list + 1] = tonumber(number) end
+        end
+    end
+    return list
+end
+
+local function load(bbpPath, clientName)
+    clientName = clientName or "forever"
+    local client = assert(CLIENTS[clientName], "unknown client: " .. tostring(clientName))
+    local dir = client.dir
+    local tocPath = bbpPath .. "/" .. client.toc
+    local numbers = interfaces(tocPath)
+
     mock.install()
     mock.lenientGlobals()
+    _G.WOW_PROJECT_ID, _G.WOW_PROJECT_MAINLINE = client.project, 1
+    _G.GetBuildInfo = function() return client.build, "1", "date", numbers[1] end
     -- The installed BetterBlizzPlates' real version, as the game would report it.
-    mock.readToc("BetterBlizzPlates", bbpPath .. "/BetterBlizzPlates_Camelot.toc")
+    mock.readToc("BetterBlizzPlates", tocPath)
 
     local function run(rel, ...)
         local chunk = assert(loadfile(bbpPath .. "/" .. rel))
@@ -47,15 +79,24 @@ return function(bbpPath)
     run("locales/enUS.lua")
     run("shared/functions.lua")
     for _, rel in ipairs({ "shared/fontFallback.lua", "shared/nameplateToggles.lua", "shared/threatTweaks.lua",
-        "shared/comboVisibility.lua", "forever/modules/profiles.lua" }) do
+        "shared/comboVisibility.lua", dir .. "/modules/profiles.lua" }) do
         local ok, err = pcall(run, rel)
         if not ok and os.getenv("BBBP_VERBOSE") then io.stderr:write("skip ", rel, ": ", tostring(err), "\n") end
     end
 
-    local body = findDefaults(bbpPath .. "/forever/BetterBlizzPlates.lua")
+    local body = findDefaults(bbpPath .. "/" .. dir .. "/BetterBlizzPlates.lua")
     local defaults = assert(loadstring("local addonVersion = '1.00' local L = BBP.L return {\n" .. body .. "\n}"))()
 
     BetterBlizzPlatesDB = CopyTable(defaults)
+    -- The classic clients fill some lists outside the defaults table (per expansion). The options
+    -- code needs them to exist; empty is enough here.
+    for line in io.lines(bbpPath .. "/" .. dir .. "/gui.lua") do
+        if line:find("Create%w*List%w*%(") then
+            for key in line:gmatch("BetterBlizzPlatesDB%.([%w_]+)") do
+                if BetterBlizzPlatesDB[key] == nil then BetterBlizzPlatesDB[key] = {} end
+            end
+        end
+    end
     BetterBlizzPlatesDB.hasNotOpenedSettings = nil
     BetterBlizzPlatesDB.wasOnLoadingScreen = false
     BBP.exportDefaults = defaults
@@ -71,7 +112,14 @@ return function(bbpPath)
         end
     end })
 
-    run("forever/gui.lua")
+    run(dir .. "/gui.lua")
 
-    return { mock = mock, defaults = defaults, bbpPath = bbpPath }
+    return { mock = mock, defaults = defaults, bbpPath = bbpPath, client = clientName, dir = dir,
+        interfaces = numbers }
+end
+
+-- Called with a path: load. Called with nothing: the client table, for tools that only need the list.
+return function(bbpPath, clientName)
+    if not bbpPath then return { clients = CLIENTS, order = ORDER, interfaces = interfaces } end
+    return load(bbpPath, clientName)
 end

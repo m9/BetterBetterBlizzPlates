@@ -19,6 +19,7 @@ local FOLDED = { Indicators = true }
 -- A BetterBlizzPlates group goes to `page` when it holds these settings.
 --   has    = exact keys (strong match)      prefix = key prefixes
 --   master = key of the checkbox that turns the feature on (shown in the group header)
+--   own    = that checkbox sits in the group itself, not in a feature list on another page
 --   title  = name to use when BetterBlizzPlates gives the group none
 local GROUPS = {
     { id = "general", page = "Nameplates", has = { "classicNameplates", "smallPetsInPvP" } },
@@ -28,6 +29,9 @@ local GROUPS = {
     { id = "look", page = "Nameplates", has = { "useCustomFont", "useCustomTextureForBars" } },
     { id = "visibility", page = "Nameplates", has = { "nameplateShowAll", "setCVarAcrossAllCharacters" } },
     { id = "alpha", page = "Nameplates", has = { "enableNpNonTargetAlpha" } },
+    -- Pages only the classic clients have. Each is one untitled group, named after its page.
+    { id = "fadeNPC", page = "Nameplates", has = { "fadeOutNPCWhitelistOn" }, master = "fadeOutNPC", own = true },
+    { id = "hideNPC", page = "Nameplates", has = { "hideNPCWhitelistOn" }, master = "hideNPC", own = true },
 
     { id = "fakeName", page = "Names and text", prefix = { "useFakeName", "fakeName" } },
     { id = "arena", page = "Names and text", has = { "shortArenaSpecName", "arenaIndicatorTestMode" },
@@ -39,9 +43,11 @@ local GROUPS = {
     { id = "colorNPC", page = "Colors", prefix = { "colorNPC" } },
     { id = "threat", page = "Colors", title = "Threat Colors", master = "enemyColorThreat",
         prefix = { "threatColor", "enemyColorThreat", "threatPercent" } },
+    { id = "auraColor", page = "Colors", has = { "auraColorPvEOnly" }, master = "auraColor", own = true },
 
     { id = "castbar", page = "Castbar", has = { "nameplateCastbarTestMode", "enableCastbarCustomization" } },
     { id = "castbarSize", page = "Castbar", has = { "fitCastIconLeftOfCast" } },
+    { id = "hideCastbar", page = "Castbar", has = { "hideCastbarWhitelistOn" }, master = "hideCastbar", own = true },
 
     { id = "healerIndicator", page = "Indicators", prefix = { "healerIndicator" }, master = "healerIndicator" },
     { id = "classIndicator", page = "Indicators", prefix = { "classIndicator", "classIcon" }, master = "classIndicator" },
@@ -91,6 +97,7 @@ local ITEMS = {
     scaleNpNameWithParent = "names", skipAdjustingFixedFonts = "names", customFontSizeEnabled = "names",
     showNameplateShadow = "border", changeNameplateBorderSize = "border",
     changeNameplateBorderColor = "border", changeNpHpBgColor = "border",
+    npBorderDesaturate = "border", changeNpHpBgColorSolid = "border",
     prdLegacyLook = "personal", fancyPrdAltTexture = "personal", hidePersonalManaFX = "personal",
     personalNpTRP3Color = "personal", personalBarTweaks = "personal",
 }
@@ -205,21 +212,27 @@ function R.Build(source, generalName)
         srcPage.fallback = fallback
 
         local lastPage
-        for _, family in ipairs(families(srcPage)) do
+        local pageFamilies = families(srcPage)
+        -- A page that is one untitled group (not the main page): the page's name is the title.
+        local soleName = #pageFamilies == 1 and srcPage ~= source.pages[1] and srcPage.name ~= ""
+            and srcPage.name or nil
+        for _, family in ipairs(pageFamilies) do
             local keys = keysOf(family.sections)
             local rule = bestRule(keys)
+            local familyName = family.name
+            if familyName == generalName and soleName then familyName = soleName end
             local group
             if rule then
                 group = groupById[rule.id]
                 if not group then
-                    local name = family.name
+                    local name = familyName
                     if name == generalName and rule.title then name = rule.title end
                     group = newGroup(rule.page, name, rule.id)
-                elseif group.name == generalName and family.name ~= generalName then
-                    group.name = family.name
+                elseif group.name == generalName and familyName ~= generalName then
+                    group.name = familyName
                 end
             else
-                group = newGroup(next(keys) == nil and lastPage or fallback, family.name)
+                group = newGroup(next(keys) == nil and lastPage or fallback, familyName)
             end
             lastPage = group.page.name
 
@@ -271,9 +284,10 @@ function R.Build(source, generalName)
     end
 
     -- 2. Single settings: feature switches, moved settings, the global test mode.
-    local masterOf = {}
+    local masterOf, ownMaster = {}, {}
     for _, rule in ipairs(GROUPS) do
         if rule.master then masterOf[rule.master] = rule.id end
+        if rule.master and rule.own then ownMaster[rule.master] = true end
     end
     local previewAll
     local function sweep(group, items)
@@ -285,7 +299,7 @@ function R.Build(source, generalName)
             local moveId = key and ITEMS[key]
             if key == PREVIEW_ALL then
                 previewAll = cut(items, index)[1]
-            elseif masterGroup and masterGroup ~= group and not masterGroup.master then
+            elseif masterGroup and not masterGroup.master and (masterGroup ~= group or ownMaster[key]) then
                 local block = cut(items, index)
                 masterGroup.master = block[1]
                 for i = #block, 2, -1 do
@@ -294,6 +308,13 @@ function R.Build(source, generalName)
                     if child.parent == block[1] then child.parent = nil end
                     table.insert(masterGroup.items, 1, child)
                 end
+                -- Same list: the children went in before `index`, so step over what moved up.
+                if items == masterGroup.items then index = index + #block - 1 end
+            elseif masterGroup and masterGroup == group and masterGroup.master and masterGroup.master ~= item
+                and item.kind == "check" and not (items[index + 1] and (items[index + 1].depth or 0) > 0) then
+                -- A second copy of the feature switch (the classic totem list page has one). The
+                -- group header already holds it.
+                table.remove(items, index)
             elseif moveId and (groupById[moveId] or EXTRA[moveId]) and groupById[moveId] ~= group then
                 local target = groupById[moveId] or newGroup(EXTRA[moveId].page, EXTRA[moveId].title, moveId)
                 for _, moved in ipairs(cut(items, index)) do

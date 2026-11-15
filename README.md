@@ -49,20 +49,26 @@ Each release is made for one BetterBlizzPlates version. The version says which: 
 
 With any other BetterBlizzPlates version the window stays closed and says which version it needs.
 
+## Game versions
+
+Works on every game version BetterBlizzPlates supports: Retail, Forever, Mists, Cata, Wrath, TBC and Classic Era. One download for all.
+
+Mists and older have fewer settings, because BetterBlizzPlates has fewer there.
+
 ## Install
 
-Copy the folder to `_forever_\Interface\AddOns\BetterBetterBlizzPlates`. Needs BetterBlizzPlates in the matching version.
+Copy the folder to `Interface\AddOns\BetterBetterBlizzPlates` of your game version. Needs BetterBlizzPlates in the matching version.
 
 ## Release tools
 
-`luajit tools/check.lua <path to BetterBlizzPlates>` - parses every file, runs the tests, and reports what changed since the last release (`tools/snapshot.txt`). Add `--update` to save a new snapshot.
+`luajit tools/check.lua <path to BetterBlizzPlates>` - parses every file, checks the versions and the game version list, runs the tests for every game version, and reports what changed since the last release (`tools/snapshots`). Add `--update` to save new snapshots.
 
 `luajit tools/build.lua` - makes `out/BetterBetterBlizzPlates-<version>.zip`. Refuses a `-dev` version unless `--dev` is given.
 
 ## Test
 
-`luajit tests/test.lua <path to BetterBlizzPlates>` - runs the window against BetterBlizzPlates' options code in a fake game API.
+`luajit tests/test.lua <path to BetterBlizzPlates> [client]` - runs the window against BetterBlizzPlates' options code in a fake game API. Client: `forever` (default), `retail`, `era`, `tbc`, `wrath`, `cata`, `mists`.
 
 `luajit tests/test_missing.lua` - checks nothing errors when BetterBlizzPlates is missing or changed.
 
-`luajit tests/dump.lua <path to BetterBlizzPlates>` - prints every setting by page and group. Add `raw` for BetterBlizzPlates' own pages.
+`luajit tests/dump.lua <path to BetterBlizzPlates> [raw] [client]` - prints every setting by page and group. Add `raw` for BetterBlizzPlates' own pages.

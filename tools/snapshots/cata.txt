@@ -1,0 +1,343 @@
+#keyless	Auras	28
+#keyless	Castbar	17
+#keyless	Colors	20
+#keyless	Indicators	74
+#keyless	Nameplates	17
+#keyless	Names and text	35
+#keyless	Other	2
+#keyless	Personal bar	4
+#keyless	Size and stacking	10
+#keyless	System	9
+absorbIndicator	Indicators	Absorb Indicator
+absorbIndicatorEnemyOnly	Indicators	Absorb Indicator
+absorbIndicatorOnPlayersOnly	Indicators	Absorb Indicator
+absorbIndicatorTestMode	Indicators	Absorb Indicator
+alwaysHideEnemyCastbar	Nameplates	Enemy Nameplates
+alwaysHideFriendlyCastbar	Nameplates	Friendly Nameplates
+alwaysShowPurgeTexture	Auras	Enemy Nameplates
+anchorCastIconOnRight	Castbar	Castbar settings
+anonMode	Names and text	Names
+arenaIndicatorBg	Names and text	Arena nameplates
+arenaIndicatorTestMode	Names and text	Arena nameplates
+auraColor	Colors	Color by Aura
+auraColorPvEOnly	Colors	Color by Aura
+avoidCVarPickup	System	CVars
+blizzardDefaultFilterOnlyMine	Auras	Enemy Nameplates
+castBarDragonflightShield	Castbar	Castbar settings
+castBarEmphasisColor	Castbar	Castbar emphasis settings
+castBarEmphasisHealthbarColor	Castbar	Castbar emphasis settings
+castBarEmphasisHeight	Castbar	Castbar emphasis settings
+castBarEmphasisIcon	Castbar	Castbar emphasis settings
+castBarEmphasisOnlyInterruptable	Castbar	Castbar emphasis settings
+castBarEmphasisSelfColor	Castbar	Castbar emphasis settings
+castBarEmphasisSpark	Castbar	Castbar emphasis settings
+castBarEmphasisText	Castbar	Castbar emphasis settings
+castBarFullTextWidth	Castbar	Castbar settings
+castBarIconPixelBorder	Castbar	Castbar settings
+castBarInterruptHighlighter	Castbar	Castbar Edge Highlight settings
+castBarInterruptHighlighterColorDontInterrupt	Castbar	Castbar Edge Highlight settings
+castBarPixelBorder	Castbar	Castbar settings
+castBarRecolor	Castbar	Castbar settings
+castBarRecolorInterrupt	Castbar	Castbar settings
+castbarAlwaysOnTop	Castbar	Castbar settings
+castbarQuickHide	Castbar	Castbar settings
+castbarTargetTextInsideBar	Names and text	Target Text: Other
+changeHealthbarHeight	Other	Misc settings
+changeNameplateBorderColor	Colors	Border and background
+changeNameplateBorderSize	Colors	Border and background
+changeNpHpBgColor	Colors	Border and background
+changeNpHpBgColorSolid	Colors	Border and background
+classColorPersonalNameplate	Nameplates	Friendly Nameplates
+classIconArenaOnly	Indicators	Class Indicator: Visibility
+classIconBgOnly	Indicators	Class Indicator: Visibility
+classIconColorBorder	Indicators	Class Indicator: Icon
+classIconSquareBorder	Indicators	Class Indicator: Icon
+classIconSquareBorderFriendly	Indicators	Class Indicator: Icon
+classIndicator	Indicators	Class Indicator
+classIndicatorCCAuras	Indicators	Class Indicator: Other
+classIndicatorEnemy	Indicators	Class Indicator
+classIndicatorFriendly	Indicators	Class Indicator
+classIndicatorHealer	Indicators	Class Indicator: Icon
+classIndicatorHideRaidMarker	Indicators	Class Indicator: Other
+classIndicatorHighlight	Indicators	Class Indicator: Highlight
+classIndicatorHighlightColor	Indicators	Class Indicator: Highlight
+classIndicatorSpecIcon	Indicators	Class Indicator: Icon
+classicNameplates	Nameplates	General settings
+colorCastbarBorder	Colors	Border and background
+colorNPC	Colors	Color NPC
+colorNPCName	Colors	Color NPC
+combatIndicator	Indicators	Combat Indicator
+combatIndicatorArenaOnly	Indicators	Combat Indicator
+combatIndicatorAssumePalaCombat	Indicators	Combat Indicator
+combatIndicatorEnemyOnly	Indicators	Combat Indicator
+combatIndicatorPlayersOnly	Indicators	Combat Indicator
+combatIndicatorSap	Indicators	Combat Indicator
+customFontSizeEnabled	Names and text	Names
+darkModeNameplateResource	Personal bar	Resource Settings (Combo points etc)
+disableCVarForceOnLogin	System	CVars
+doNotHideFriendlyHealthbarInPve	Other	Misc settings
+enableCastbarCustomization	Castbar	Castbar settings
+enableCastbarEmphasis	Castbar	Castbar emphasis settings
+enableCustomFontOutline	Nameplates	Font and texture
+enableNameplateAuraCustomisation	Auras	General
+enemyColorName	Nameplates	Enemy Nameplates
+enemyColorThreat	Colors	Threat Colors
+enemyColorThreatCombatOnly	Colors	Threat Colors
+enemyColorThreatCombatOnlyPlayer	Colors	Threat Colors: Visibility
+enemyColorThreatHideSolo	Colors	Threat Colors: Visibility
+enemyHealthBarColor	Nameplates	Enemy Nameplates
+enlargeAllCC	Auras	General
+enlargeAllImportantBuffs	Auras	General
+executeIndicator	Indicators	Execute Indicator
+executeIndicatorAlwaysOn	Indicators	Execute Indicator: Visibility
+executeIndicatorFriendly	Indicators	Execute Indicator: Visibility
+executeIndicatorNotOnFullHp	Indicators	Execute Indicator: Visibility
+executeIndicatorPercentSymbol	Indicators	Execute Indicator: Text / Line
+executeIndicatorShowDecimal	Indicators	Execute Indicator: Text / Line
+executeIndicatorTargetOnly	Indicators	Execute Indicator: Visibility
+executeIndicatorTestMode	Indicators	Execute Indicator
+executeIndicatorUseTexture	Indicators	Execute Indicator: Text / Line
+executeSkull	Indicators	Execute Indicator: Execute Skull
+executeSkullAttachToHealth	Indicators	Execute Indicator: Execute Skull
+executeSkullAttachToThreshold	Indicators	Execute Indicator: Execute Skull
+executeSkullKeepIndicator	Indicators	Execute Indicator: Execute Skull
+factionIndicator	Indicators	Faction Indicator
+factionIndicatorEnemy	Indicators	Faction Indicator: Visibility
+factionIndicatorFriendly	Indicators	Faction Indicator: Visibility
+factionIndicatorHostileOnly	Indicators	Faction Indicator: Visibility
+factionIndicatorOnlyPvPZone	Indicators	Faction Indicator: Visibility
+factionIndicatorOnlyWorld	Indicators	Faction Indicator: Visibility
+factionIndicatorPvPTaggedOnly	Indicators	Faction Indicator: Visibility
+factionIndicatorTestMode	Indicators	Faction Indicator
+fadeAllButTarget	Nameplates	Fade NPC
+fadeNPCPvPOnly	Nameplates	Fade NPC
+fadeOutNPC	Nameplates	Fade NPC
+fadeOutNPCWhitelistOn	Nameplates	Fade NPC
+fakeNameRaiseStrata	Names and text	Name Reposition: Other
+fakeNameScaleWithParent	Names and text	Name Reposition: Other
+fitCastIconLeftOfCast	Castbar	Castbar Adjustments
+focusTargetIndicator	Indicators	Focus Target Indicator
+focusTargetIndicatorChangeTexture	Indicators	Focus Target Indicator
+focusTargetIndicatorColorName	Indicators	Focus Target Indicator
+focusTargetIndicatorColorNameplate	Indicators	Focus Target Indicator
+focusTargetIndicatorTestMode	Indicators	Focus Target Indicator
+forceClassColors	Other	Misc settings
+forceEnglishGUI	System	BBP
+friendIndicator	Other	Misc settings
+friendlyColorName	Nameplates	Friendly Nameplates
+friendlyHealthBarColor	Nameplates	Friendly Nameplates
+friendlyHideHealthBar	Nameplates	Friendly Nameplates
+friendlyHideHealthBarNpc	Nameplates	Friendly Nameplates
+friendlyNameplateClickthrough	Nameplates	Friendly Nameplates
+friendlyNameplateClickthrough	Size and stacking	Clicking
+friendlyNpBuffEnable	Auras	Friendly Nameplates
+friendlyNpBuffFilterBlacklist	Auras	Friendly Nameplates
+friendlyNpBuffFilterImportantBuffs	Auras	Friendly Nameplates
+friendlyNpBuffFilterLessMinite	Auras	Friendly Nameplates
+friendlyNpBuffFilterOnlyMe	Auras	Friendly Nameplates
+friendlyNpBuffFilterWatchList	Auras	Friendly Nameplates
+friendlyNpdeBuffEnable	Auras	Friendly Nameplates
+friendlyNpdeBuffFilterBlacklist	Auras	Friendly Nameplates
+friendlyNpdeBuffFilterBlizzard	Auras	Friendly Nameplates
+friendlyNpdeBuffFilterCC	Auras	Friendly Nameplates
+friendlyNpdeBuffFilterLessMinite	Auras	Friendly Nameplates
+friendlyNpdeBuffFilterWatchList	Auras	Friendly Nameplates
+guiFontEnabled	System	BBP
+healerIndicator	Indicators	Healer Indicator
+healerIndicatorArenaOnly	Indicators	Healer Indicator: Visibility
+healerIndicatorBgOnly	Indicators	Healer Indicator: Visibility
+healerIndicatorChangeTexture	Indicators	Healer Indicator: Healthbar
+healerIndicatorColorEnemyHealthbar	Indicators	Healer Indicator: Healthbar
+healerIndicatorColorFriendlyHealthbar	Indicators	Healer Indicator: Healthbar
+healerIndicatorEnemyOnly	Indicators	Healer Indicator: Visibility
+healerIndicatorRedCrossEnemy	Indicators	Healer Indicator: Visibility
+healerIndicatorTestMode	Indicators	Healer Indicator
+healerIndicatorTextureOverFocus	Indicators	Healer Indicator: Healthbar
+healthNumbers	Names and text	Health Numbers
+healthNumbersClassColor	Names and text	Health Numbers
+healthNumbersCombined	Names and text	Health Numbers
+healthNumbersCurrentFull	Names and text	Health Numbers
+healthNumbersFriendly	Names and text	Health Numbers
+healthNumbersHideSelf	Names and text	Health Numbers
+healthNumbersNotOnFullHp	Names and text	Health Numbers
+healthNumbersNpcs	Names and text	Health Numbers
+healthNumbersOnlyInCombat	Names and text	Health Numbers
+healthNumbersPercentSymbol	Names and text	Health Numbers
+healthNumbersPercentage	Names and text	Health Numbers
+healthNumbersPlayers	Names and text	Health Numbers
+healthNumbersRawNumbers	Names and text	Health Numbers
+healthNumbersShowDecimal	Names and text	Health Numbers
+healthNumbersSwapped	Names and text	Health Numbers
+healthNumbersTargetOnly	Names and text	Health Numbers
+healthNumbersTestMode	Names and text	Health Numbers
+healthNumbersUseMillions	Names and text	Health Numbers
+hideCastbar	Castbar	Hide Castbar
+hideCastbarBorderShield	Castbar	Castbar settings
+hideCastbarEnemy	Castbar	Hide Castbar
+hideCastbarFriendly	Castbar	Hide Castbar
+hideCastbarIcon	Castbar	Castbar settings
+hideCastbarText	Castbar	Castbar settings
+hideCastbarWhitelistOn	Castbar	Hide Castbar
+hideDefaultPersonalNameplateAuras	Auras	Personal Bar
+hideEliteDragon	Nameplates	Enemy Nameplates
+hideEnemyNameText	Nameplates	Enemy Nameplates
+hideFriendlyNameText	Nameplates	Friendly Nameplates
+hideNPC	Nameplates	Hide NPC
+hideNPCAllNeutral	Nameplates	Hide NPC
+hideNPCArenaOnly	Nameplates	Hide NPC
+hideNPCHideOthersPets	Nameplates	Hide NPC
+hideNPCHideSecondaryPets	Nameplates	Hide NPC
+hideNPCSecondaryShowMurloc	Nameplates	Hide NPC
+hideNPCWhitelistOn	Nameplates	Hide NPC
+hideNameDuringCast	Castbar	Castbar settings
+hideNpAuraSwipe	Auras	General
+hideNpAurasOnUnattackableEnemies	Auras	General
+hideNpcCastbar	Castbar	Hide Castbar
+hidePetCastbars	Castbar	Hide Castbar
+hideRaidmarkIndicator	Indicators	Raidmarker
+hideResourceOnFriend	Personal bar	Resource Settings (Combo points etc)
+hideTargetHighlight	Nameplates	General settings
+interruptedByIndicator	Castbar	Castbar settings
+keepNameplatesHidden	Other	Misc settings
+nameplateAuraCompactedSquare	Auras	General
+nameplateAuraEnlargedSquare	Auras	General
+nameplateAuraKeyAuraPositionEnabled	Auras	General
+nameplateAuraKeyAuraPositionFriendly	Auras	Personal Bar
+nameplateAuraPlayersOnly	Auras	General
+nameplateAuraPlayersOnlyShowTarget	Auras	General
+nameplateAuraRightToLeft	Auras	General
+nameplateAuraSquare	Auras	General
+nameplateAuraTaller	Auras	General
+nameplateAuraTestMode	Auras	General
+nameplateAuraTooltip	Auras	General
+nameplateAurasEnemyCenteredAnchor	Auras	General
+nameplateAurasFriendlyCenteredAnchor	Auras	General
+nameplateCastbarTestMode	Castbar	Castbar settings
+nameplateCenterAllRows	Auras	General
+nameplateResourceDoNotRaiseAuras	Auras	General
+nameplateResourceOnTarget	Personal bar	Resource Settings (Combo points etc)
+nameplateResourceUnderCastbar	Personal bar	Resource Settings (Combo points etc)
+nameplateShowAll	Nameplates	Nameplate Visibility CVars
+nameplateStackingTypes_Enemy	Size and stacking	Stacking
+nameplateStackingTypes_Friendly	Size and stacking	Stacking
+normalCastbarForEmpoweredCasts	Castbar	Castbar settings
+npBorderClassColor	Colors	Border and background
+npBorderDesaturate	Colors	Border and background
+npBorderFriendFoeColor	Colors	Border and background
+npBorderTargetColor	Colors	Border and background
+npColorAuraBorder	Auras	General
+npTargetTextHideOnNpcs	Names and text	Target Text: Visibility
+npcTitleColor	Names and text	Names
+onlyPandemicAuraMine	Auras	General
+onlyShowInterruptableCasts	Castbar	Hide Castbar
+otherNpBuffEnable	Auras	Enemy Nameplates
+otherNpBuffFilterBlacklist	Auras	Enemy Nameplates
+otherNpBuffFilterImportantBuffs	Auras	Enemy Nameplates
+otherNpBuffFilterLessMinite	Auras	Enemy Nameplates
+otherNpBuffFilterPurgeable	Auras	Enemy Nameplates
+otherNpBuffFilterWatchList	Auras	Enemy Nameplates
+otherNpBuffPurgeGlow	Auras	Enemy Nameplates
+otherNpdeBuffEnable	Auras	Enemy Nameplates
+otherNpdeBuffFilterBlacklist	Auras	Enemy Nameplates
+otherNpdeBuffFilterBlizzard	Auras	Enemy Nameplates
+otherNpdeBuffFilterCC	Auras	Enemy Nameplates
+otherNpdeBuffFilterLessMinite	Auras	Enemy Nameplates
+otherNpdeBuffFilterOnlyMe	Auras	Enemy Nameplates
+otherNpdeBuffFilterWatchList	Auras	Enemy Nameplates
+overShields	Indicators	Absorb Indicator
+partyPointer	Indicators	Party Pointer
+partyPointerArenaOnly	Indicators	Party Pointer: Visibility
+partyPointerBgOnly	Indicators	Party Pointer: Visibility
+partyPointerCCAuras	Indicators	Party Pointer: Other
+partyPointerClassColor	Indicators	Party Pointer: Icon
+partyPointerHealer	Indicators	Party Pointer: Icon
+partyPointerHealerReplace	Indicators	Party Pointer: Icon
+partyPointerHideAll	Indicators	Party Pointer: Other
+partyPointerHideRaidmarker	Indicators	Party Pointer: Other
+partyPointerHighlight	Indicators	Party Pointer: Icon
+partyPointerTargetIndicator	Indicators	Party Pointer: Other
+partyPointerTestMode	Indicators	Party Pointer
+personalNpBuffEnable	Auras	Personal Bar
+personalNpBuffFilterBlacklist	Auras	Personal Bar
+personalNpBuffFilterBlizzard	Auras	Personal Bar
+personalNpBuffFilterImportantBuffs	Auras	Personal Bar
+personalNpBuffFilterLessMinite	Auras	Personal Bar
+personalNpBuffFilterOnlyMe	Auras	Personal Bar
+personalNpBuffFilterWatchList	Auras	Personal Bar
+personalNpdeBuffEnable	Auras	Personal Bar
+personalNpdeBuffFilterBlacklist	Auras	Personal Bar
+personalNpdeBuffFilterCC	Auras	Personal Bar
+personalNpdeBuffFilterLessMinite	Auras	Personal Bar
+personalNpdeBuffFilterWatchList	Auras	Personal Bar
+petIndicator	Indicators	Pet Indicator
+petIndicatorColorHealthbar	Indicators	Pet Indicator
+petIndicatorHideSecondaryPets	Indicators	Pet Indicator
+petIndicatorShowMurloc	Indicators	Pet Indicator
+petIndicatorTestMode	Indicators	Pet Indicator
+questIndicator	Indicators	Quest Indicator
+questIndicatorColorNpc	Indicators	Quest Indicator
+questIndicatorTestMode	Indicators	Quest Indicator
+raidmarkIndicator	Indicators	Raidmarker
+raidmarkerPvPOnly	Indicators	Raidmarker
+removeRealmNames	Nameplates	General settings
+scaleNpNameWithParent	Names and text	Names
+separateAuraBuffRow	Auras	General
+setCVarAcrossAllCharacters	Nameplates	Nameplate Visibility CVars
+shortArenaSpecName	Names and text	Arena nameplates
+showCastBarIconWhenNoninterruptible	Castbar	Castbar settings
+showCastbarIfTarget	Castbar	Hide Castbar
+showCircleOnArenaID	Names and text	Arena nameplates
+showDefaultCooldownNumbersOnNpAuras	Auras	General
+showGuildNames	Names and text	Names
+showInterruptsOnNameplateAuras	Auras	General
+showLastNameNpc	Names and text	Names
+showNameplateCastbarTimer	Nameplates	Enemy Nameplates
+showNameplateTargetText	Names and text	Target Text
+showNpcTitle	Names and text	Names
+showTotemIndicatorCooldownSwipe	Indicators	Totem Indicator
+skipAdjustingFixedFonts	Names and text	Names
+smallPetsInPvP	Nameplates	General settings
+sortCompactedAurasFirst	Auras	General
+sortDurationAuras	Auras	General
+sortEnlargedAurasFirst	Auras	General
+targetIndicator	Indicators	Target Indicator
+targetIndicatorAnchorToName	Indicators	Target Indicator
+targetIndicatorChangeTexture	Indicators	Target Indicator
+targetIndicatorColorName	Indicators	Target Indicator
+targetIndicatorColorNameplate	Indicators	Target Indicator
+targetIndicatorDouble	Indicators	Target Indicator
+targetIndicatorHideIcon	Indicators	Target Indicator
+targetIndicatorRecolor	Indicators	Target Indicator
+targetTextAlwaysShow	Names and text	Target Text: Always on
+targetTextAlwaysShowPvE	Names and text	Target Text
+targetTextAlwaysShowPvP	Names and text	Target Text: Always on
+targetTextAlwaysShowWorld	Names and text	Target Text
+targetTextEnemy	Names and text	Target Text: Visibility
+targetTextFriendly	Names and text	Target Text
+targetTextStatic	Names and text	Target Text: Other
+targetTextTestMode	Names and text	Target Text
+testAllEnabledFeatures	Indicators	Healer Indicator
+threatColorAlwaysOn	Colors	Threat Colors
+threatColorName	Colors	Threat Colors
+threatColorNameOnly	Colors	Threat Colors
+threatColorRoleOnly	Colors	Threat Colors: Visibility
+threatPercent	Colors	Threat Colors: Threat Percent
+threatPercentTestMode	Colors	Threat Colors
+toggleNamesOffDuringPVE	Names and text	Names
+totemIndicator	Indicators	Totem Indicator
+totemIndicatorColorHealthBar	Indicators	Totem Indicator
+totemIndicatorColorName	Indicators	Totem Indicator
+totemIndicatorEnemyOnly	Indicators	Totem Indicator
+totemIndicatorHideAuras	Indicators	Totem Indicator
+totemIndicatorHideHealthBar	Indicators	Totem Indicator
+totemIndicatorHideNameAndShiftIconDown	Indicators	Totem Indicator
+totemIndicatorNoAnimation	Indicators	Totem Indicator
+totemIndicatorTestMode	Indicators	Totem Indicator
+useCustomCastbarBGTexture	Castbar	Castbar settings
+useCustomCastbarTexture	Castbar	Castbar settings
+useCustomFont	Nameplates	Font and texture
+useCustomTextureForBars	Nameplates	Font and texture
+useCustomTextureForEnemy	Nameplates	Font and texture
+useCustomTextureForFriendly	Nameplates	Font and texture
+useFakeName	Names and text	Name Reposition
+useFakeNameAnchorBottom	Names and text	Name Reposition

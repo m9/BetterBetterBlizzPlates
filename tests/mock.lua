@@ -258,6 +258,10 @@ function Obj:GetTextColor()
     local c = state[self].color or { 1, 0.82, 0, 1 }
     return c[1], c[2], c[3], c[4] or 1
 end
+function Obj:SetAtlas(atlas) state[self].atlas, state[self].file = atlas, nil end
+function Obj:GetAtlas() return state[self].atlas end
+function Obj:SetTexture(file) state[self].file, state[self].atlas = file, nil end
+function Obj:GetTexture() return state[self].file end
 function Obj:SetVertexColor(r, g, b, a) state[self].vertex = { r, g, b, a } end
 function Obj:GetVertexColor()
     local c = state[self].vertex or { 1, 1, 1, 1 }
@@ -328,6 +332,42 @@ function M.install()
     G.SettingsPanel = new("Frame", nil, "SettingsPanel")
     G.SettingsPanelSearchIcon = new("Texture", nil, "SettingsPanelSearchIcon")
     G.GameTooltip = new("GameTooltip", nil, "GameTooltip")
+    -- A tooltip that keeps its lines, like the game's (GameTooltipTextLeft1, ...).
+    do
+        local tip, count = G.GameTooltip, 0
+        M.tooltip = { lines = {} }
+        local function line(i)
+            local left = rawget(G, "GameTooltipTextLeft" .. i)
+            if not left then
+                left = new("FontString", nil, "GameTooltipTextLeft" .. i)
+                rawset(G, "GameTooltipTextLeft" .. i, left)
+                rawset(G, "GameTooltipTextRight" .. i, new("FontString", nil, "GameTooltipTextRight" .. i))
+            end
+            return left, rawget(G, "GameTooltipTextRight" .. i)
+        end
+        local function add(text, r, g, b, rightText)
+            count = count + 1
+            local left, right = line(count)
+            left:SetText(text)
+            left:SetTextColor(r or 1, g or 0.82, b or 0, 1)
+            right:SetText(rightText or "")
+            right:SetShown(rightText ~= nil)
+            M.tooltip.lines[count] = { text = text, right = rightText }
+        end
+        local function clear()
+            count = 0
+            M.tooltip.lines = {}
+        end
+        rawset(tip, "SetOwner", function(_, owner) clear() M.tooltip.owner = owner end)
+        rawset(tip, "ClearLines", clear)
+        rawset(tip, "AddLine", function(_, text, r, g, b) add(text, r, g, b) end)
+        rawset(tip, "AddDoubleLine", function(_, text, rightText, r, g, b) add(text, r, g, b, rightText) end)
+        rawset(tip, "SetText", function(_, text, r, g, b) clear() add(text, r, g, b) end)
+        rawset(tip, "NumLines", function() return count end)
+        rawset(tip, "IsOwned", function(_, owner) return M.tooltip.owner == owner end)
+        rawset(tip, "Hide", function() state[tip].shown = false M.tooltip.owner = nil end)
+        state[tip].shown = false
+    end
     G.ColorPickerFrame = new("Frame", nil, "ColorPickerFrame")
     G.UISpecialFrames = {}
     state[G.SettingsPanel].shown = false
@@ -471,7 +511,12 @@ function M.install()
 
     local lib = setmetatable({}, { __index = function() return noop end })
     lib.MediaType = { FONT = "font", STATUSBAR = "statusbar" }
-    function lib:HashTable() return { ["Media A"] = "path\\a", ["Media B"] = "path\\b", ["Media C"] = "path\\c" } end
+    function lib:HashTable(kind)
+        if kind == "font" then
+            return { ["Font A"] = "path\\fa", ["Font B"] = "path\\fb", ["Font C"] = "path\\fc" }
+        end
+        return { ["Media A"] = "path\\a", ["Media B"] = "path\\b", ["Media C"] = "path\\c" }
+    end
     function lib:Fetch() return "path" end
     function lib:List() return {} end
     G.LibStub = setmetatable({}, { __call = function() return lib end })

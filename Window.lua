@@ -139,11 +139,13 @@ end
 -- builder. Its hidden dropdown does not update its text when we show the menu.
 local fakeElement = setmetatable({}, { __index = function() return function() end end })
 
-local function currentChoice(w)
+-- `nested`: the choices sit in sub menus (the classic font and texture lists are paged).
+local function currentChoice(w, nested)
     local generator = w.menuGenerator
     if type(generator) ~= "function" or w.fontPool or w.texturePool then return end
     local chosen
-    local root = setmetatable({}, { __index = function(_, method)
+    local root
+    root = setmetatable({}, { __index = function(_, method)
         if method == "CreateRadio" then
             return function(_, text, isSelected, _, data)
                 if not chosen and type(isSelected) == "function" then
@@ -153,7 +155,7 @@ local function currentChoice(w)
                 return fakeElement
             end
         end
-        return function() return fakeElement end
+        return function() return nested and root or fakeElement end
     end })
     if pcall(generator, w, root) and type(chosen) == "string" then
         return Clean(chosen)
@@ -376,11 +378,26 @@ end
 ------------------------------------------------------------
 local function tipItem(owner, item)
     if not item or not GameTooltip then return end
+    local lines
+    if W.captureTips and item.tipTitle == "" and not item.tipText then
+        if not item.tipLines then run(H.CaptureTip, item) end
+        lines = item.tipLines
+    end
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
-    GameTooltip:AddLine(item.tipTitle ~= "" and item.tipTitle or item.name)
-    if item.tipText then GameTooltip:AddLine(item.tipText, 1, 1, 1, true) end
-    if item.tipSub then GameTooltip:AddLine(item.tipSub, 1, 1, 1, true) end
-    if item.cvar then GameTooltip:AddLine("CVar: " .. item.cvar, 0.6, 0.6, 0.6) end
+    if lines and lines[1] then
+        for index, line in ipairs(lines) do
+            if line.right then
+                GameTooltip:AddDoubleLine(line.text, line.right, line.r, line.g, line.b, line.r, line.g, line.b)
+            else
+                GameTooltip:AddLine(line.text, line.r, line.g, line.b, index > 1)
+            end
+        end
+    else
+        GameTooltip:AddLine(item.tipTitle ~= "" and item.tipTitle or item.name)
+        if item.tipText then GameTooltip:AddLine(item.tipText, 1, 1, 1, true) end
+        if item.tipSub then GameTooltip:AddLine(item.tipSub, 1, 1, 1, true) end
+        if item.cvar then GameTooltip:AddLine("CVar: " .. item.cvar, 0.6, 0.6, 0.6) end
+    end
     if moreHandlers(item) then GameTooltip:AddLine("Right-click: more.", 0.2, 0.97, 0.58) end
     local parent = item.parent
     if parent and parent.kind == "check" and not isEnabled(item) and not isChecked(parent) then
@@ -479,10 +496,13 @@ local function refreshRow(row)
         end
     elseif item.kind == "dropdown" then
         local raw = call(w.Text, "GetText")
-        local text = currentChoice(w) or Clean(raw)
+        local chosen = currentChoice(w, item.nestedMenu)
+        local text = chosen or Clean(raw)
         local drop = row.drop
-        local font = w.fontPool and media("font", raw) or nil
-        local bar = w.texturePool and media("statusbar", raw) or nil
+        -- Sample pools keep their text current. Without them, trust the menu's own selection.
+        local mediaName = item.nestedMenu and chosen or raw
+        local font = item.media == "font" and media("font", mediaName) or nil
+        local bar = item.media == "statusbar" and media("statusbar", mediaName) or nil
         if text == "" or text == item.name then
             text = multiSummary(w) or "Select"
         end
@@ -495,9 +515,9 @@ local function refreshRow(row)
         drop.value:SetPoint("RIGHT", drop, "RIGHT", bar and -100 or -24, 0)
         setEnabled(drop, enabled)
     elseif item.kind == "color" then
-        local c = H.swatchColor[w.colorTexture]
-        if c and c[1] then
-            row.swatch.color:SetColorTexture(c[1], c[2] or 1, c[3] or 1, 1)
+        local r, g, b = H.SwatchColor(w)
+        if r then
+            row.swatch.color:SetColorTexture(r, g, b, 1)
             row.swatch.unknown:Hide()
         else
             row.swatch.color:SetColorTexture(0.25, 0.25, 0.25, 1)
@@ -1271,6 +1291,14 @@ function W.Show(newModel)
     if newModel and newModel ~= model then
         model = newModel
         W.model = model
+        -- No control carries its tooltip text: a classic client. Copy tooltips on hover instead.
+        W.captureTips = true
+        for _, item in ipairs(model.items) do
+            if item.tipTitle ~= "" or item.tipText then
+                W.captureTips = false
+                break
+            end
+        end
         for index, page in ipairs(model.pages) do
             local button = W.pageButtons[index] or createPageButton(index)
             button.page = page

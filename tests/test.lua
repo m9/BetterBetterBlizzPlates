@@ -1,10 +1,13 @@
--- luajit tests/test.lua <BetterBlizzPlates folder>
+-- luajit tests/test.lua <BetterBlizzPlates folder> [client]
 -- Runs this addon against the installed BetterBlizzPlates options code in a fake API.
 
 local bbpPath = assert(arg[1], "usage: luajit tests/test.lua <BetterBlizzPlates folder>")
-local env = dofile("tests/load_bbp.lua")(bbpPath)
+local env = dofile("tests/load_bbp.lua")(bbpPath, arg[2])
 local mock = env.mock
 local state = mock.state
+-- Era, TBC, Wrath, Cata and Mists share one copy of BetterBlizzPlates' options code. It differs
+-- from the retail and Forever copies in a few places; those checks branch on this.
+local classic = env.dir == "classics"
 
 local passed = 0
 local function check(cond, what)
@@ -152,8 +155,10 @@ state[row].scripts.OnClick(row, "LeftButton")
 check((BetterBlizzPlatesDB.hideEliteDragon and true or false) == before, "row click toggles back")
 
 -- Nested settings keep their parent.
-local child = find(function(i) return i.key == "otherNpBuffFilterPurgeableAny" end)
-check(child and child.depth == 2 and child.parent and child.parent.key == "otherNpBuffFilterPurgeable",
+local childKey = classic and "alwaysShowPurgeTexture" or "otherNpBuffFilterPurgeableAny"
+local parentKey = classic and "otherNpBuffPurgeGlow" or "otherNpBuffFilterPurgeable"
+local child = find(function(i) return i.key == childKey end)
+check(child and child.depth == 2 and child.parent and child.parent.key == parentKey,
     "nested setting sits under its parent")
 check(child.page.name == "Auras" and child.sectionName == "Enemy Nameplates",
     "aura page groups by heading: " .. tostring(child.sectionName))
@@ -218,14 +223,29 @@ check(BetterBlizzPlatesDB.testAllEnabledFeatures == true, "page preview turns te
 frame.pagePreview:Click()
 check(BetterBlizzPlatesDB.testAllEnabledFeatures == false, "page preview turns it off")
 local auras = pageNamed("Auras")
-check(auras.preview and auras.preview.kind == "button", "Auras page uses the test button")
-auras.preview.widget:Enable()
-W.SelectPage(auras)
-frame.pagePreview:Click()
-check(BetterBlizzPlatesDB.nameplateAuraTestMode == true, "aura preview on")
-check(frame.pagePreview:GetText() == "Stop preview", "aura preview shows it is on")
-frame.pagePreview:Click()
-check(not BetterBlizzPlatesDB.nameplateAuraTestMode, "aura preview off")
+if classic then
+    -- The classic aura page has a test checkbox, not a test button: a group preview.
+    local group
+    for _, section in ipairs(auras.sections) do
+        if section.preview then group = section end
+    end
+    check(group and group.preview.kind == "check", "Auras has a group preview")
+    group.preview.widget:Enable()
+    row = headerFor(group)
+    row.preview:Click()
+    check(BetterBlizzPlatesDB.nameplateAuraTestMode == true, "aura preview on")
+    row.preview:Click()
+    check(not BetterBlizzPlatesDB.nameplateAuraTestMode, "aura preview off")
+else
+    check(auras.preview and auras.preview.kind == "button", "Auras page uses the test button")
+    auras.preview.widget:Enable()
+    W.SelectPage(auras)
+    frame.pagePreview:Click()
+    check(BetterBlizzPlatesDB.nameplateAuraTestMode == true, "aura preview on")
+    check(frame.pagePreview:GetText() == "Stop preview", "aura preview shows it is on")
+    frame.pagePreview:Click()
+    check(not BetterBlizzPlatesDB.nameplateAuraTestMode, "aura preview off")
+end
 check(pageNamed("Size and stacking").preview, "stacking page has a preview")
 
 -- Slider: drag, step buttons, exact value, value outside the range.
@@ -282,14 +302,35 @@ check(row.drop.value:GetText() == BBP.L["Anchor_" .. BetterBlizzPlatesDB.healerI
 item = find(function(i) return i.kind == "dropdown" and i.name == "Texture (Enemy)" end)
 check(item, "texture dropdown named")
 row = rowFor(item)
+if classic then
+    -- No sample pool there: the kind comes from the menu, the value from its selected choice.
+    check(item.media == "statusbar" and not item.widget.texturePool, "texture dropdown found by its choices")
+    local picks = {}
+    local pages
+    pages = setmetatable({}, { __index = function(_, method)
+        return function(_, text, _, onSelect)
+            if method == "CreateRadio" then picks[#picks + 1] = { text = text, select = onSelect } end
+            return pages
+        end
+    end })
+    item.widget.menuGenerator(item.widget, pages)
+    check(#picks >= 3, "texture choices sit in sub menus: " .. #picks)
+    picks[2].select()
+    W.RefreshRows()
+    check(row.drop.value:GetText() == picks[2].text, "texture dropdown shows the chosen texture")
+    local font = find(function(i) return i.kind == "dropdown" and i.media == "font" end)
+    check(font and font.name:find("^Font"), "font dropdown found and named: " .. tostring(font and font.name))
+end
 check(row.drop.sample:IsShown(), "texture dropdown shows a sample")
-item = find(function(i) return i.kind == "dropdown" and i.name == "Hide Options" end)
+item = find(function(i) return i.kind == "dropdown" and type(i.widget.options) == "table" and i.widget.IsOptionOn end)
+check(item, "a multi-choice dropdown exists")
 row = rowFor(item)
 check(tostring(row.drop.value:GetText()):find("^%d+ of %d+ on$"), "multi-choice shows a count: " .. tostring(row.drop.value:GetText()))
 check(not row.drop.sample:IsShown(), "no sample on other dropdowns")
 
 -- Texture menu samples must not leak into the next menu (rows are reused by the game).
-do
+-- The classic clients put no samples on menu rows, so there is nothing to leak there.
+if not classic then
     local function fakeRoot(rowFrame)
         local rootDesc = {}
         local element = setmetatable({}, { __index = function(_, method)
@@ -356,8 +397,9 @@ do
 end
 
 -- Colour: opens the colour picker through the original swatch.
-item = find(function(i) return i.kind == "color" and i.name == "Boss" end)
-check(item, "Boss colour found")
+local colourName = classic and "Tank: Full Aggro" or "Boss"
+item = find(function(i) return i.kind == "color" and i.name == colourName end)
+check(item, colourName .. " colour found")
 local picker
 rawset(ColorPickerFrame, "SetupColorPickerAndShow", function(_, info) picker = info end)
 row = rowFor(item)
@@ -365,6 +407,27 @@ item.widget:SetAlpha(1)
 W.RefreshRows()
 row.swatch:Click()
 check(picker and picker.swatchFunc, "colour picker opened")
+do
+    local colours = 0
+    for _, it in ipairs(model.items) do
+        if it.kind == "color" then
+            colours = colours + 1
+            check(H.SwatchOf(it.widget), "colour box has a swatch: " .. it.name)
+        end
+    end
+    check(colours >= 15, "colour boxes found: " .. colours)
+end
+if classic then
+    -- The classic swatch is a tinted texture inside a border frame; its colour can be read back.
+    check(not item.widget.colorTexture, "classic colour box has no colorTexture field")
+    rawset(ColorPickerFrame, "GetColorRGB", function() return 0.25, 0.5, 0.75 end)
+    rawset(ColorPickerFrame, "GetColorAlpha", function() return 1 end)
+    picker.swatchFunc()
+    local r, g, b = H.SwatchColor(item.widget)
+    check(r == 0.25 and g == 0.5 and b == 0.75, "picked colour is read from the swatch")
+    W.RefreshRows()
+    check(not row.swatch.unknown:IsShown(), "our swatch shows a known colour")
+end
 
 -- More: right-click options are reachable.
 item = find(function(i) return i.key == "smallPetsInPvP" end)
@@ -440,8 +503,73 @@ item = find(function(i) return i.kind == "slider" and not i.reset end)
 check(not rowFor(item).reset:IsShown(), "no Reset where BetterBlizzPlates has none")
 
 -- Keyless settings moved by label.
-check(find(function(i) return i.name == "PRD Max Auras" end).sectionName == "Personal Resource Display",
-    "PRD sliders sit with the personal resource display")
+if not classic then
+    check(find(function(i) return i.name == "PRD Max Auras" end).sectionName == "Personal Resource Display",
+        "PRD sliders sit with the personal resource display")
+end
+
+-- Classic clients only: pages, headings and tooltips that work differently there.
+if classic then
+    -- Pages that are one untitled group take the page's name and get their switch in the header.
+    for _, want in ipairs({
+        { page = "Castbar", key = "hideCastbar", child = "hideCastbarWhitelistOn" },
+        { page = "Nameplates", key = "fadeOutNPC", child = "fadeOutNPCWhitelistOn" },
+        { page = "Nameplates", key = "hideNPC", child = "hideNPCWhitelistOn" },
+        { page = "Colors", key = "auraColor", child = "auraColorPvEOnly" },
+    }) do
+        local inner = find(function(i) return i.key == want.child end)
+        check(inner and inner.page.name == want.page, want.child .. " on " .. want.page)
+        local group = inner.section
+        check(group.name ~= "General" and group.name ~= "", want.key .. " group is named: " .. group.name)
+        check(group.master and group.master.key == want.key, want.key .. " is the group's switch")
+        check(inner.depth == 0, want.child .. " is not nested under the switch any more")
+    end
+    local hide = find(function(i) return i.key == "hideCastbarWhitelistOn" end).section
+    row = headerFor(hide)
+    before = BetterBlizzPlatesDB.hideCastbar and true or false
+    row.master:Click()
+    check((BetterBlizzPlatesDB.hideCastbar and true or false) == not before, "classic header switch works")
+    row.master:Click()
+
+    -- Aura page headings hang on the first checkbox of each block.
+    check(find(function(i) return i.key == "otherNpBuffFilterBlacklist" end).sectionName == "Enemy Nameplates",
+        "enemy aura block has its heading")
+    check(find(function(i) return i.key == "friendlyNpBuffFilterBlacklist" end).sectionName == "Friendly Nameplates",
+        "friendly aura block has its heading")
+    check(find(function(i) return i.key == "personalNpBuffFilterBlacklist" end).sectionName == "Personal Bar",
+        "personal aura block has its heading")
+
+    -- The totem list page repeats the feature switch; it is shown once.
+    local totems = 0
+    for _, it in ipairs(model.items) do
+        if it.key == "totemIndicator" then totems = totems + 1 end
+    end
+    check(totems == 1, "totem switch listed once: " .. totems)
+
+    -- Tooltips are copied from BetterBlizzPlates' hover handler.
+    check(W.captureTips, "tooltips are read on hover")
+    item = find(function(i) return i.kind == "slider" and i.sectionName == "Healer Indicator" and i.name == "Enemy Scale" end)
+    check(item and item.alt == "Size", "repeated sliders take their tooltip title as name")
+    row = rowFor(item)
+    state[row].scripts.OnEnter(row)
+    check(mock.tooltip.owner == row, "tooltip is shown on our row")
+    check(mock.tooltip.lines[1] and mock.tooltip.lines[1].text == "Enemy Scale",
+        "tooltip shows BetterBlizzPlates' text: " .. tostring(mock.tooltip.lines[1] and mock.tooltip.lines[1].text))
+    state[row].scripts.OnLeave(row)
+    item = find(function(i) return i.key == "hideCastbarWhitelistOn" end)
+    row = rowFor(item)
+    state[row].scripts.OnEnter(row)
+    check(#mock.tooltip.lines >= 2 and #mock.tooltip.lines[1].text > #item.name,
+        "checkbox tooltip has its description: " .. tostring(mock.tooltip.lines[1].text))
+    state[row].scripts.OnLeave(row)
+
+    -- Per-zone rows: the dropdown is named by the row's label or tooltip, never "None".
+    for _, it in ipairs(model.items) do
+        check(it.name ~= "None" and it.name ~= "", "every setting has a name")
+    end
+else
+    check(not W.captureTips, "tooltips come from the controls")
+end
 
 -- Pages remember their scroll position.
 local pageA, pageB = pageNamed("Auras"), pageNamed("Castbar")

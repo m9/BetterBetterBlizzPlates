@@ -52,6 +52,59 @@ local function textOf(region)
 end
 
 ------------------------------------------------------------
+-- Colour boxes
+------------------------------------------------------------
+-- Retail and Forever keep the swatch texture in frame.colorTexture. The classic clients do not:
+-- there the box is a frame with a label, a click handler and one small border frame that holds
+-- two textures, the border (an atlas) and the swatch (a plain file, tinted with SetVertexColor).
+local swatches = setmetatable({}, { __mode = "k" })
+
+local function classicSwatch(frame)
+    if not frame.text or not call(frame, "GetScript", "OnMouseDown") then return end
+    local children = list(frame, "GetChildren")
+    if #children ~= 1 or objType(children[1]) ~= "Frame" then return end
+    local regions = list(children[1], "GetRegions")
+    if #regions ~= 2 then return end
+    local plain = {}
+    for _, region in ipairs(regions) do
+        if objType(region) ~= "Texture" then return end
+        if not call(region, "GetAtlas") then plain[#plain + 1] = region end
+    end
+    if #plain == 1 then return plain[1] end
+    -- The border atlas may be missing on a client: then pick the swatch by its file.
+    for _, region in ipairs(plain) do
+        local file = call(region, "GetTexture")
+        if type(file) == "string" and file:lower():find("iconmask", 1, true) then return region end
+    end
+end
+
+-- The swatch texture of a colour box, or nil when the frame is not one.
+function H.SwatchOf(frame)
+    if type(frame) ~= "table" then return end
+    if frame.colorTexture then return frame.colorTexture end
+    local known = swatches[frame]
+    if known == nil then
+        known = classicSwatch(frame) or false
+        swatches[frame] = known
+    end
+    return known or nil
+end
+local swatchOf = H.SwatchOf
+
+-- r, g, b of a colour box, or nil when it is not known.
+function H.SwatchColor(frame)
+    local texture = swatchOf(frame)
+    if not texture then return end
+    local c = H.swatchColor[texture]
+    if c and c[1] then return c[1], c[2] or 1, c[3] or 1 end
+    -- A tinted swatch can be read back. A SetColorTexture one cannot, so it is watched instead.
+    if not frame.colorTexture then
+        local r, g, b = call(texture, "GetVertexColor")
+        if r then return r, g or 1, b or 1 end
+    end
+end
+
+------------------------------------------------------------
 -- Widget kinds
 ------------------------------------------------------------
 local function kindOf(frame)
@@ -67,7 +120,7 @@ local function kindOf(frame)
     end
     if t == "EditBox" then return "skip" end
     if type(frame.SetupMenu) == "function" and type(frame.SetDefaultText) == "function" then return "dropdown" end
-    if t == "Frame" and frame.colorTexture and frame.text then return "color" end
+    if t == "Frame" and frame.text and swatchOf(frame) then return "color" end
 end
 
 local function popupTitle(frame)
@@ -91,6 +144,56 @@ local function captionFor(widget, parent)
         end
     end
     return ""
+end
+
+-- "font" or "statusbar" for a dropdown that picks a LibSharedMedia font or bar texture.
+-- Retail and Forever mark these with a sample pool. The classic clients do not, so there the
+-- first choice of the menu is looked up in the media lists.
+local MAX_PROBE = 40
+local function mediaKind(frame)
+    if frame.fontPool then return "font" end
+    if frame.texturePool then return "statusbar" end
+    local generator = frame.menuGenerator
+    if type(generator) ~= "function" or type(LibStub) ~= "table" then return end
+    local ok, lib = pcall(LibStub, "LibSharedMedia-3.0", true)
+    if not ok or type(lib) ~= "table" or type(lib.HashTable) ~= "function" then return end
+    local first, calls = nil, 0
+    local root
+    root = setmetatable({}, { __index = function(_, method)
+        return function(_, text)
+            calls = calls + 1
+            if calls > MAX_PROBE then error("enough", 0) end
+            if method == "CreateRadio" and not first and type(text) == "string" then
+                first = text
+                error("enough", 0)
+            end
+            return root
+        end
+    end })
+    pcall(generator, frame, root)
+    if not first then return end
+    for _, kind in ipairs({ "font", "statusbar" }) do
+        local found, names = pcall(lib.HashTable, lib, kind)
+        if found and type(names) == "table" and names[first] ~= nil then return kind end
+    end
+end
+H.MediaKind = mediaKind
+
+-- A control alone in a small row frame with one label: that label names it.
+local function rowLabel(widget)
+    local parent = call(widget, "GetParent")
+    if objType(parent) ~= "Frame" or #list(parent, "GetChildren") ~= 1 then return "" end
+    local found
+    for _, region in ipairs(list(parent, "GetRegions")) do
+        if objType(region) == "FontString" then
+            local text = textOf(region)
+            if text ~= "" then
+                if found then return "" end
+                found = text
+            end
+        end
+    end
+    return found or ""
 end
 
 local function sliderLabel(frame)
@@ -120,8 +223,11 @@ local function nameOf(kind, frame)
         if label ~= "" then return label end
         label = captionFor(frame, call(frame, "GetParent"))
         if label ~= "" then return label end
-        if frame.fontPool then return "", nil, "Font" end
-        if frame.texturePool then return "", nil, "Texture" end
+        label = rowLabel(frame)
+        if label ~= "" then return label end
+        local kind = mediaKind(frame)
+        if kind == "font" then return "", nil, "Font" end
+        if kind == "statusbar" then return "", nil, "Texture" end
         return textOf(frame.Text)
     elseif kind == "color" then
         local label = textOf(frame.text)
@@ -130,6 +236,40 @@ local function nameOf(kind, frame)
         return captionFor(frame, call(frame, "GetParent"))
     end
     return ""
+end
+
+------------------------------------------------------------
+-- Tooltips on the classic clients
+------------------------------------------------------------
+-- Retail and Forever store tooltip texts on the control. The classic clients keep them inside
+-- the control's hover handler. There the handler is run once on the hidden original and the
+-- lines it wrote are copied to item.tipLines ({} when it wrote none).
+local MAX_TIP_LINES = 30
+function H.CaptureTip(item)
+    local w = item.widget
+    local lines = {}
+    item.tipLines = lines
+    local tip = GameTooltip
+    local enter = call(w, "GetScript", "OnEnter")
+    if type(tip) ~= "table" or type(enter) ~= "function" then return lines end
+    pcall(enter, w)
+    if call(tip, "IsOwned", w) then
+        local count = math.min(tonumber(call(tip, "NumLines")) or 0, MAX_TIP_LINES)
+        for i = 1, count do
+            local left, right = _G["GameTooltipTextLeft" .. i], _G["GameTooltipTextRight" .. i]
+            local text = left and call(left, "GetText")
+            if type(text) == "string" and text ~= "" then
+                local r, g, b = call(left, "GetTextColor")
+                local extra = right and call(right, "IsShown") and call(right, "GetText") or nil
+                lines[#lines + 1] = { text = text, r = r, g = g, b = b,
+                    right = type(extra) == "string" and extra ~= "" and extra or nil }
+            end
+        end
+    end
+    local leave = call(w, "GetScript", "OnLeave")
+    if type(leave) == "function" then pcall(leave, w) end
+    call(tip, "Hide")
+    return lines
 end
 
 ------------------------------------------------------------
@@ -172,11 +312,26 @@ local function columnHeading(widget, widgetSet, cache)
     return best
 end
 
+-- The classic clients hang some headings on the first checkbox of a block, a little above it,
+-- instead of anchoring the block to the heading. Collected per page: checkbox -> heading text.
+local function noteHeadingAbove(region, above)
+    local point, rel, relPoint, _, y = call(region, "GetPoint", 1)
+    if type(rel) ~= "table" or type(point) ~= "string" or type(relPoint) ~= "string" then return end
+    if objType(rel) ~= "CheckButton" or type(rel.bbpMouseDownHandlers) ~= "table" then return end
+    if call(region, "GetParent") == rel then return end  -- the checkbox's own label
+    local isAbove = (tonumber(y) or 0) >= 15 or (point:find("BOTTOM") and relPoint:find("TOP"))
+    if not isAbove then return end
+    local text = textOf(region)
+    if text ~= "" and #text <= MAX_HEADING and not above[rel] then above[rel] = text end
+end
+
 -- `stop` holds the item's ancestor widgets: reaching one means "same group as the parent".
 local function headingFor(widget, pageFrame, widgetSet, stop, cache)
     local cur = widget
     for _ = 1, MAX_CHAIN do
         if cur == widget or widgetSet[cur] then
+            local above = cache.above and cache.above[cur]
+            if above then return above end
             local byColumn = columnHeading(cur, widgetSet, cache)
             if byColumn then return byColumn end
         end
@@ -208,8 +363,15 @@ end
 ------------------------------------------------------------
 local pageButtons
 
+local pageAbove
+
 local function walk(frame, ctx, out)
     if ctx.depthGuard > 25 then return end
+    if pageAbove then
+        for _, region in ipairs(list(frame, "GetRegions")) do
+            if objType(region) == "FontString" then noteHeadingAbove(region, pageAbove) end
+        end
+    end
     for _, child in ipairs(list(frame, "GetChildren")) do
         if type(child) == "table" and not call(child, "IsForbidden") then
             local kind = kindOf(child)
@@ -243,8 +405,10 @@ local function buildPage(frame, name, general)
     local raw, widgetSet, cache = {}, {}, {}
     page.buttons = {}
     pageButtons = page.buttons
+    cache.above = {}
+    pageAbove = cache.above
     walk(frame, { widgetSet = widgetSet, depthGuard = 0 }, raw)
-    pageButtons = nil
+    pageButtons, pageAbove = nil, nil
 
     local byName = {}
     local function sectionNamed(sectionName, base, sub)
@@ -263,6 +427,13 @@ local function buildPage(frame, name, general)
     for _, item in ipairs(raw) do
         local w = item.widget
         item.name, item.alt, item.autoName = nameOf(item.kind, w)
+        if item.kind == "dropdown" then
+            if w.fontPool then item.media = "font"
+            elseif w.texturePool then item.media = "statusbar"
+            elseif item.autoName == "Font" then item.media, item.nestedMenu = "font", true
+            elseif item.autoName == "Texture" then item.media, item.nestedMenu = "statusbar", true
+            end
+        end
         item.page = page
         item.tipTitle = Clean(w.tooltipTitle)
         item.tipText = type(w.tooltipMainText) == "string" and w.tooltipMainText or nil
@@ -278,6 +449,24 @@ local function buildPage(frame, name, general)
             item.near = target
             if target.kind == "dropdown" and item.kind == "check" and not anchoredTo[target] then
                 anchoredTo[target] = item
+            end
+        end
+    end
+    -- A page where no control stores its tooltip is a classic client's. Retail and Forever name a
+    -- dropdown by its tooltip title first; do the same there by reading the tooltip now.
+    local storesTips = false
+    for _, item in ipairs(raw) do
+        if item.tipTitle ~= "" or item.tipText then
+            storesTips = true
+            break
+        end
+    end
+    if not storesTips then
+        for _, item in ipairs(raw) do
+            if item.kind == "dropdown" then
+                local first = H.CaptureTip(item)[1]
+                local title = first and Clean(first.text) or ""
+                if isShort(title) then item.name, item.autoName = title, nil end
             end
         end
     end
@@ -381,12 +570,18 @@ local function buildPage(frame, name, general)
 
     -- Names that repeat inside a group: sliders take their longer name,
     -- dropdowns add the setting they sit next to.
+    -- On a classic client a repeated slider has no longer name yet: read its tooltip title now.
     for _, section in ipairs(page.sections) do
         local seen = {}
         for _, item in ipairs(section.items) do
             seen[item.name] = (seen[item.name] or 0) + 1
         end
         for _, item in ipairs(section.items) do
+            if seen[item.name] > 1 and item.kind == "slider" and not item.alt and not storesTips then
+                local first = H.CaptureTip(item)[1]
+                local title = first and Clean(first.text) or ""
+                if isShort(title) and title ~= item.name then item.alt = title end
+            end
             if seen[item.name] > 1 then
                 if item.kind == "slider" and item.alt and item.alt ~= "" then
                     item.name, item.alt = item.alt, item.name
@@ -497,8 +692,8 @@ function H.Build(generalName)
         for _, item in ipairs(page.items) do
             model.items[#model.items + 1] = item
             if item.kind == "color" then
-                local texture = item.widget.colorTexture
-                colors[texture] = H.swatchColor[texture] or {}
+                local texture = swatchOf(item.widget)
+                if texture then colors[texture] = H.swatchColor[texture] or {} end
             end
         end
     end

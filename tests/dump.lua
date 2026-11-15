@@ -1,7 +1,12 @@
 -- Dev tool: print the settings found in the installed BetterBlizzPlates.
--- luajit tests/dump.lua <BetterBlizzPlates folder> [raw]
+-- luajit tests/dump.lua <BetterBlizzPlates folder> [raw] [client]
 --   default: the regrouped pages shown in the window     raw: BetterBlizzPlates' own pages
-local env = dofile("tests/load_bbp.lua")(arg[1])
+--   client: forever (default), retail, era, tbc, wrath, cata, mists
+local clientName
+for i = #arg, 2, -1 do
+    if arg[i] ~= "raw" then clientName = table.remove(arg, i) end
+end
+local env = dofile("tests/load_bbp.lua")(arg[1], clientName)
 local mock = env.mock
 
 local ns = {}

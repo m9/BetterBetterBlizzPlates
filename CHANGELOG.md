@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.4b-p0
+
+For BetterBlizzPlates 2.2.4b.
+
 ## 2.2.4-p0
 
 For BetterBlizzPlates 2.2.4.

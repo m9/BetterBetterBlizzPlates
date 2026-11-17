@@ -1,8 +1,8 @@
 ## Interface: 120105, 120100, 16001, 50504, 40402, 30405, 38000, 38002, 20506, 20505, 11509, 11508
 ## Title: BetterBetterBlizzPlates
 ## Notes: Clean options window for BetterBlizzPlates.
-## Version: 2.2.4b-p0
-## X-BetterBlizzPlates-Version: 2.2.4b
+## Version: 2.2.5-p0
+## X-BetterBlizzPlates-Version: 2.2.5
 ## X-Curse-Project-ID: 1802237
 ## Dependencies: BetterBlizzPlates
 ## SavedVariables: BetterBetterBlizzPlatesDB

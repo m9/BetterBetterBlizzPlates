@@ -248,6 +248,58 @@ else
 end
 check(pageNamed("Size and stacking").preview, "stacking page has a preview")
 
+-- Castbar page on Retail and Forever: two columns placed by x/y under headings, a slider for
+-- enemies and one for friends per row, and a test button instead of a test checkbox.
+if not classic then
+    local castbar = pageNamed("Castbar")
+    check(castbar.preview and castbar.preview.kind == "button", "Castbar page uses the test button")
+    BBP.nameplateCastBarTestMode = BBP.nameplateCastBarTestMode or function() end
+    BBP.cancelTimers = BBP.cancelTimers or function() end
+    castbar.preview.widget:Enable()
+    W.SelectPage(castbar)
+    frame.pagePreview:Click()
+    check(BetterBlizzPlatesDB.nameplateCastbarTestMode == true, "castbar preview on")
+    check(frame.pagePreview:GetText() == "Stop preview", "castbar preview shows it is on")
+    frame.pagePreview:Click()
+    check(not BetterBlizzPlatesDB.nameplateCastbarTestMode, "castbar preview off")
+
+    local function sectionOf(pred)
+        local found = find(pred)
+        return found and found.page == castbar and found.sectionName or nil
+    end
+    local sizeGroup = BBP.L["Size_And_Position"]
+    for _, name in ipairs({ "Enemy_Castbar_Height", "Friendly_Castbar_Height", "Enemy_Castbar_X_Offset",
+        "Friendly_Castbar_X_Offset" }) do
+        local title = BBP.L[name]
+        check(sectionOf(function(i) return i.kind == "slider" and i.name == title end) == sizeGroup,
+            title .. " slider is under " .. sizeGroup)
+    end
+    check(sectionOf(function(i) return i.kind == "slider" and i.name == BBP.L["Friendly_Cast_Icon_Size"] end)
+        == BBP.L["Icon"], "friendly icon size is under Icon")
+    check(sectionOf(function(i) return i.key == "anchorCastIconOnRight" end) == BBP.L["Icon"],
+        "icon checkbox is under Icon")
+    check(sectionOf(function(i) return i.key == "castBarRecolor" end) == BBP.L["Colors_And_Textures"],
+        "colour checkbox is under its heading")
+    check(sectionOf(function(i) return i.key == "hideCastbarText" end) == BBP.L["Castbar_Text_Header"],
+        "text checkbox is under its heading")
+    check(sectionOf(function(i) return i.key == "castbarAlwaysOnTop" end) == BBP.L["Other"],
+        "last checkboxes are under Other")
+    local dependent = find(function(i) return i.key == "anchorCastIconOnRight" end)
+    check(dependent.needs and dependent.needs.key == "enableCastbarCustomization",
+        "a setting under its own heading still knows its switch")
+    local swatch = find(function(i) return i.kind == "color" and i.name == BBP.L["Cast"] end)
+    check(swatch and swatch.parent and swatch.parent.key == "castBarRecolor", "cast colour sits under Re-color")
+    local hideText = find(function(i) return i.key == "hideCastbarText" end)
+    local after
+    for index, other in ipairs(hideText.section.items) do
+        if other == hideText then after = hideText.section.items[index + 1] end
+    end
+    check(after and after.kind == "dropdown" and after.name == BBP.L["Hide_Options"],
+        "the hide list comes right after Hide Castbar Text")
+    local friendly = find(function(i) return i.kind == "slider" and i.name == BBP.L["Friendly_Vertical_Position"] end)
+    check(friendly and friendly.page.name == "Size and stacking", "friendly vertical position found")
+end
+
 -- Slider: drag, step buttons, exact value, value outside the range.
 item = find(function(i) return i.kind == "slider" and i.sectionName == "Healer Indicator" and i.name == "Friendly Scale" end)
 check(item, "Friendly Scale slider found")

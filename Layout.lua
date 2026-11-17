@@ -75,6 +75,7 @@ local GROUPS = {
 local SOURCES = {
     { page = "Auras", has = "enableNameplateAuraCustomisation" },
     { page = "Size and stacking", has = "nameplateStackingTypes_Enemy" },
+    { page = "Castbar", has = "enableCastbarCustomization" },
     { page = "Castbar", has = "nameplateCastbarTestMode" },
     { page = "Indicators", has = "healerIndicatorTestMode" },
     { page = "Nameplates", has = "classicNameplates" },
@@ -117,6 +118,7 @@ end
 -- Test buttons (not checkboxes): locale keys of their off and on labels.
 local PREVIEW_BUTTONS = {
     { off = "Test_Auras", on = "Stop_Test" },
+    { off = "Test_Castbars", on = "Stop_Test" },
     { off = "Test", on = "Label_Stop_Testing" },
 }
 

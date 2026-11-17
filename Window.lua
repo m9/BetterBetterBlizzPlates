@@ -399,7 +399,7 @@ local function tipItem(owner, item)
         if item.cvar then GameTooltip:AddLine("CVar: " .. item.cvar, 0.6, 0.6, 0.6) end
     end
     if moreHandlers(item) then GameTooltip:AddLine("Right-click: more.", 0.2, 0.97, 0.58) end
-    local parent = item.parent
+    local parent = item.parent or item.needs
     if parent and parent.kind == "check" and not isEnabled(item) and not isChecked(parent) then
         GameTooltip:AddLine("Needs: " .. parent.name, 1, 0.35, 0.35)
     end

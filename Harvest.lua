@@ -305,7 +305,9 @@ local function columnHeading(widget, widgetSet, cache)
     local best, bestGap
     for _, heading in ipairs(columnHeadings(rel, cache)) do
         local dx, gap = x - heading.x, heading.y - y
-        if gap >= 0 and dx >= -20 and dx <= 90 and (not bestGap or gap < bestGap) then
+        -- Wide enough for a checkbox left of the heading text (the heading has an icon before
+        -- it) and for the second slider of a two-slider row.
+        if gap >= 0 and dx >= -30 and dx <= 110 and (not bestGap or gap < bestGap) then
             best, bestGap = heading.text, gap
         end
     end
@@ -523,12 +525,36 @@ local function buildPage(frame, name, general)
                 item.section = parent.section
                 item.depth = parent.depth + 1
             else
+                -- Under its own heading, but still switched by the checkbox it hangs on.
+                item.needs = parent
                 item.parent = nil
                 item.section = sectionNamed(heading or general, base, base and sub or nil)
                 item.depth = 0
             end
             table.insert(item.section.items, item)
             page.items[#page.items + 1] = item
+        end
+    end
+
+    -- A dropdown placed next to a checkbox of the same group, but listed far from it (it hangs
+    -- on the page, the checkbox on another control): it goes right after that checkbox.
+    for _, section in ipairs(page.sections) do
+        local items = section.items
+        for _, item in ipairs({ unpack(items) }) do
+            local near = item.near
+            if item.kind == "dropdown" and item.depth == 0 and near and near.kind == "check"
+                and near.section == section then
+                local from, to
+                for index, other in ipairs(items) do
+                    if other == item then from = index end
+                    if other == near then to = index end
+                end
+                while items[to + 1] and items[to + 1].depth > near.depth do to = to + 1 end
+                if from > to + 1 then
+                    table.remove(items, from)
+                    table.insert(items, to + 1, item)
+                end
+            end
         end
     end
 

@@ -1,12 +1,12 @@
 #keyless	Auras	39
-#keyless	Castbar	11
+#keyless	Castbar	25
 #keyless	Colors	31
 #keyless	Indicators	86
 #keyless	Nameplates	27
 #keyless	Names and text	38
 #keyless	Other	2
 #keyless	Personal bar	5
-#keyless	Size and stacking	11
+#keyless	Size and stacking	12
 #keyless	System	8
 absorbIndicator	Indicators	Absorb Indicator
 absorbIndicatorEnemyOnly	Indicators	Absorb Indicator
@@ -15,7 +15,7 @@ absorbIndicatorTestMode	Indicators	Absorb Indicator
 alwaysHideEnemyCastbar	Nameplates	Enemy Nameplates
 alwaysHideFriendlyCastbar	Nameplates	Friendly Nameplates
 alwaysShowPurgeTexture	Auras	Aura Glows
-anchorCastIconOnRight	Castbar	Castbar settings
+anchorCastIconOnRight	Castbar	Icon
 anonMode	Names and text	Names
 arenaIdAnchorRaiseStrata	Names and text	Arena Names
 arenaIndicatorBg	Names and text	Arena Names
@@ -26,14 +26,14 @@ bgIndicator	Indicators	Blitz Indicator
 bgIndicatorEnemyOnly	Indicators	Blitz Indicator
 bgIndicatorShowFlags	Indicators	Blitz Indicator
 bgIndicatorShowOrbs	Indicators	Blitz Indicator
-castBarDragonflightShield	Castbar	Castbar settings
-castBarFullTextWidth	Castbar	Castbar settings
-castBarIconPixelBorder	Castbar	Castbar settings
-castBarPixelBorder	Castbar	Castbar settings
-castBarRecolor	Castbar	Castbar settings
-castBarRecolorInterrupt	Castbar	Castbar settings
-castbarAlwaysOnTop	Castbar	Castbar settings
-castbarQuickHide	Castbar	Castbar settings
+castBarDragonflightShield	Castbar	Icon
+castBarFullTextWidth	Castbar	Text
+castBarIconPixelBorder	Castbar	Icon
+castBarPixelBorder	Castbar	Colors & Textures
+castBarRecolor	Castbar	Colors & Textures
+castBarRecolorInterrupt	Castbar	Colors & Textures
+castbarAlwaysOnTop	Castbar	Other
+castbarQuickHide	Castbar	Other
 castbarTargetTextInsideBar	Names and text	Target Text: Other
 centerNameplateHealthBar	Nameplates	General settings
 changeHealthbarHeight	Other	Misc settings
@@ -135,7 +135,7 @@ fakeNameMaxWidthOn	Names and text	Name Reposition: Max Width
 fakeNameRaiseStrata	Names and text	Name Reposition: Other
 fakeNameScaleWithParent	Names and text	Name Reposition: Other
 fancyPrdAltTexture	Personal bar	Personal bar
-fitCastIconLeftOfCast	Castbar	Castbar Adjustments
+fitCastIconLeftOfCast	Castbar	Icon
 fixNpTextures	Other	Misc settings
 focusTargetIndicator	Indicators	Focus Target Indicator
 focusTargetIndicatorChangeTexture	Indicators	Focus Target Indicator
@@ -197,15 +197,15 @@ healthNumbersSwapped	Names and text	Health Numbers
 healthNumbersTargetOnly	Names and text	Health Numbers
 healthNumbersTestMode	Names and text	Health Numbers
 healthNumbersUseMillions	Names and text	Health Numbers
-hideCastbarBorderShield	Castbar	Castbar settings
-hideCastbarIcon	Castbar	Castbar settings
-hideCastbarText	Castbar	Castbar settings
+hideCastbarBorderShield	Castbar	Icon
+hideCastbarIcon	Castbar	Icon
+hideCastbarText	Castbar	Text
 hideDeselectNonTargetOverlay	Other	Misc settings
 hideEliteDragon	Nameplates	Enemy Nameplates
 hideEmptyComboPoints	Personal bar	Resource Settings (Combo points etc)
 hideEnemyNameText	Nameplates	Enemy Nameplates
 hideFriendlyNameText	Nameplates	Friendly Nameplates
-hideNameDuringCast	Castbar	Castbar settings
+hideNameDuringCast	Castbar	Text
 hideNameplateAuraTooltip	Auras	Visibility
 hideNpAuraSwipe	Auras	Cooldown Text
 hidePersonalManaFX	Personal bar	Personal bar
@@ -214,9 +214,9 @@ hideResourceFrame	Personal bar	Resource Settings (Combo points etc)
 hideResourceOnFriend	Personal bar	Resource Settings (Combo points etc)
 hideTempHpLoss	Other	Misc settings
 instantComboPoints	Personal bar	Resource Settings (Combo points etc)
-interruptedByIndicator	Castbar	Castbar settings
+interruptedByIndicator	Castbar	Text
 keepNameplatesHidden	Other	Misc settings
-moveCastBarText	Castbar	Castbar settings
+moveCastBarText	Castbar	Text
 moveNormalBuffs	Auras	Big Buff Icon
 nameplateAuraBuffsBlizzardInPvE	Auras	Big Buff Icon
 nameplateAuraBuffsOnEnemyPlayers	Auras	Big Buff Icon
@@ -250,7 +250,6 @@ nameplateAurasEnemyCenteredBuffs	Auras	Style
 nameplateAurasEnemyCenteredDebuffs	Auras	Style
 nameplateAurasFriendlyCenteredBuffs	Auras	Style
 nameplateAurasFriendlyCenteredDebuffs	Auras	Style
-nameplateCastbarTestMode	Castbar	Castbar settings
 nameplateResourceOnTarget	Personal bar	Resource Settings (Combo points etc)
 nameplateResourceUnderCastbar	Personal bar	Resource Settings (Combo points etc)
 nameplateShowAll	Nameplates	Nameplate Visibility CVars
@@ -329,7 +328,7 @@ recolorTempHpLoss	Other	Misc settings
 scaleNpNameWithParent	Names and text	Names
 setCVarAcrossAllCharacters	Nameplates	Nameplate Visibility CVars
 shortArenaSpecName	Names and text	Arena Names
-showCastBarIconWhenNoninterruptible	Castbar	Castbar settings
+showCastBarIconWhenNoninterruptible	Castbar	Icon
 showCircleOnArenaID	Names and text	Arena Names
 showDefaultCooldownNumbersOnNpAuras	Auras	Cooldown Text
 showGuildNames	Names and text	Names
@@ -384,8 +383,8 @@ totemIndicatorNoAnimation	Indicators	Totem Indicator: Icon
 totemIndicatorNoGlow	Indicators	Totem Indicator: Icon
 totemIndicatorShowOtherIcons	Indicators	Totem Indicator: Icon
 totemIndicatorTestMode	Indicators	Totem Indicator
-useCustomCastbarBGTexture	Castbar	Castbar settings
-useCustomCastbarTexture	Castbar	Castbar settings
+useCustomCastbarBGTexture	Castbar	Colors & Textures
+useCustomCastbarTexture	Castbar	Colors & Textures
 useCustomFont	Nameplates	Font and texture
 useCustomTextureForBars	Nameplates	Font and texture
 useCustomTextureForEnemy	Nameplates	Font and texture

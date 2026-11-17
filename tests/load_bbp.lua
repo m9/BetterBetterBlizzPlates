@@ -88,6 +88,22 @@ local function load(bbpPath, clientName)
     local defaults = assert(loadstring("local addonVersion = '1.00' local L = BBP.L return {\n" .. body .. "\n}"))()
 
     BetterBlizzPlatesDB = CopyTable(defaults)
+    -- Settings that start as a copy of another one (BetterBlizzPlates fills them at login):
+    -- the friendly castbar values and the friendly vertical position.
+    local copies, inKeys = { friendlyNameplateVerticalPosition = "nameplateVerticalPosition" }, false
+    for line in io.lines(bbpPath .. "/" .. dir .. "/BetterBlizzPlates.lua") do
+        if line:match("^BBP%.friendlyCastbarKeys = {") then
+            inKeys = true
+        elseif inKeys and line:match("^}") then
+            break
+        elseif inKeys then
+            local from, to = line:match("^%s*([%w_]+)%s*=%s*\"([%w_]+)\"")
+            if from then copies[to] = from end
+        end
+    end
+    for to, from in pairs(copies) do
+        if BetterBlizzPlatesDB[to] == nil then BetterBlizzPlatesDB[to] = BetterBlizzPlatesDB[from] end
+    end
     -- The classic clients fill some lists outside the defaults table (per expansion). The options
     -- code needs them to exist; empty is enough here.
     for line in io.lines(bbpPath .. "/" .. dir .. "/gui.lua") do

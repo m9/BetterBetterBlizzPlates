@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.5-p0
+
+For BetterBlizzPlates 2.2.5.
+
+- Castbar page follows the new BetterBlizzPlates layout: Size & Position, Icon, Colors & Textures, Text, Other.
+- Castbar preview is now a button at the top of the page.
+- Lists sit right after the checkbox they belong to.
+
 ## 2.2.4b-p0
 
 For BetterBlizzPlates 2.2.4b.

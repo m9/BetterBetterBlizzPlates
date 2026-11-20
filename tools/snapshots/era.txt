@@ -183,6 +183,7 @@ hideDefaultPersonalNameplateAuras	Auras	Personal Bar
 hideEliteDragon	Nameplates	Enemy Nameplates
 hideEnemyNameText	Nameplates	Enemy Nameplates
 hideFriendlyNameText	Nameplates	Friendly Nameplates
+hideHealPrediction	Other	Misc settings
 hideNPC	Nameplates	Hide NPC
 hideNPCAllNeutral	Nameplates	Hide NPC
 hideNPCArenaOnly	Nameplates	Hide NPC

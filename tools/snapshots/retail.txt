@@ -205,6 +205,7 @@ hideEliteDragon	Nameplates	Enemy Nameplates
 hideEmptyComboPoints	Personal bar	Resource Settings (Combo points etc)
 hideEnemyNameText	Nameplates	Enemy Nameplates
 hideFriendlyNameText	Nameplates	Friendly Nameplates
+hideHealPrediction	Other	Misc settings
 hideNameDuringCast	Castbar	Text
 hideNameplateAuraTooltip	Auras	Visibility
 hideNpAuraSwipe	Auras	Cooldown Text

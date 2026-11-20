@@ -395,6 +395,19 @@ if env.client == "forever" then
     W.RefreshRows()
 end
 
+-- 2.2.5c: the level list has "Hide Max Level"; "Hide Heal Prediction" sits by "Keep Nameplates Hidden".
+item = find(function(i) return i.kind == "dropdown" and i.name == BBP.L["Level_Options"] end)
+check(item and type(item.widget.options) == "table", "level list found")
+local maxLevel
+for _, option in ipairs(item.widget.options) do
+    if option.key == "hideMaxLevel" then maxLevel = option end
+end
+check(maxLevel and maxLevel.label == BBP.L["Hide_Max_Level"], "level list has Hide Max Level")
+item = find(function(i) return i.key == "hideHealPrediction" end)
+local hidden = find(function(i) return i.key == "keepNameplatesHidden" end)
+check(item and item.kind == "check" and item.name == BBP.L["Hide_Heal_Prediction"], "Hide Heal Prediction found")
+check(hidden and item.section == hidden.section, "Hide Heal Prediction is with the other misc switches")
+
 -- Texture menu samples must not leak into the next menu (rows are reused by the game).
 -- The classic clients put no samples on menu rows, so there is nothing to leak there.
 if not classic then
